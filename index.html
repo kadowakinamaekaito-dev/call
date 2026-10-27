@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>発信</title>
+<style>
+  :root { --bg:#f6f7f9; --fg:#1d2330; --sub:#6b7280; --btn:#16a34a; --btnfg:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#14161a; --fg:#eef0f3; --sub:#9aa1ad; } }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+         background:var(--bg); color:var(--fg); font-family:system-ui,-apple-system,"Hiragino Sans","Yu Gothic UI",sans-serif; }
+  .box { text-align:center; padding:24px; }
+  .num { font-size:2.2rem; font-weight:700; letter-spacing:.04em; margin:8px 0 24px; }
+  a.btn { display:inline-block; background:var(--btn); color:var(--btnfg); text-decoration:none;
+          font-size:1.3rem; font-weight:700; padding:16px 40px; border-radius:999px; }
+  p { color:var(--sub); font-size:.9rem; margin-top:20px; }
+</style>
+</head>
+<body>
+<div class="box">
+  <div id="label">発信先</div>
+  <div class="num" id="num">―</div>
+  <a class="btn" id="btn" href="#">📞 発信する</a>
+  <p id="msg">自動で発信アプリが開かないときはボタンを押してください。</p>
+</div>
+<script>
+  // 番号はURLの # 以降から読む（# 以降はサーバーに送られない）
+  var raw = decodeURIComponent(location.hash.slice(1));
+  var num = raw.replace(/[^\d+]/g, "");
+  if (!/^\+?\d{6,15}$/.test(num)) {
+    document.getElementById("num").textContent = "番号が正しくありません";
+    document.getElementById("btn").style.display = "none";
+    document.getElementById("msg").textContent = "";
+  } else {
+    var shown = num;
+    if (num.indexOf("+81") === 0) {
+      var d = "0" + num.slice(3);
+      shown = d.length === 11 ? d.slice(0,3)+"-"+d.slice(3,7)+"-"+d.slice(7)
+            : d.length === 10 ? d.slice(0,2)+"-"+d.slice(2,6)+"-"+d.slice(6) : d;
+    }
+    document.getElementById("num").textContent = shown;
+    var href = "tel:" + num;
+    document.getElementById("btn").href = href;
+    setTimeout(function(){ location.href = href; }, 150);
+  }
+</script>
+</body>
+</html>
